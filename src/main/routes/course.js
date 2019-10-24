@@ -6,6 +6,7 @@ var router = express.Router();
 
 const Department = require('../models/Department')
 const TermType = require('../models/TermType')
+const User = require('../models/User');
 
 const course_manage_page = async (res, course_id) => {
 	let course_info = {
@@ -107,10 +108,17 @@ const course_new_page = async (res, department = false) => {
 /* GET course home page */
 router.route('/')
 	.get(html.auth_wrapper(async (req, res, next) => {
-		res.render('base_template', {
-			title: 'Course Portfolios',
-			body: mustache.render('course/index')
-		})
+		let user = await User.query().where({authtoken: req.session.id}).first()
+		if (user) {
+			res.render('base_template', {
+				title: 'Course Portfolios',
+				body: mustache.render('course/index'),
+				linkblue_username: user.linkblue_username
+			})
+		}
+		else {
+			res.redirect('/login')
+		}
 	}))
 
 /* GET course page */

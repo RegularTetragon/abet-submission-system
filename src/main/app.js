@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
+const session = require('express-session')
 
 // init objection
 require('./common/objection')
@@ -26,6 +27,9 @@ app.use(express.urlencoded({
 	extended: false
 }));
 app.use(cookieParser());
+app.use(session({
+  'secret' : '03fi7i733sdnHhPCPTlGXw=='
+}))
 app.use(sassMiddleware({
   src: path.join(project_root, 'public/scss'),
   dest: path.join(project_root, 'public/css'),

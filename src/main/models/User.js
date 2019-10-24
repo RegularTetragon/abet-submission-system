@@ -23,6 +23,8 @@ class User extends Model {
       properties: {
         id: { type: 'integer' },
         linkblue_username: { type: 'string' },
+        passwordhash: { type: 'string' },
+        authtoken: { type: 'authtoken' }
       }
     };
   }
