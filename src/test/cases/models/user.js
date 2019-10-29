@@ -11,7 +11,9 @@ describe('Model - User', () => {
 	
 			expect(user).to.deep.equal({
 				id: 1,
-				linkblue_username: 'user'
+				linkblue_username: 'user',
+				passwordhash: '$2b$10$L1Plm9AJN1DlvUemUkxgmuf8srfTkvNnUV9ImKl/E0UKyAQTbNJS6',
+				authtoken: null
 			})
 		})
 	
@@ -21,7 +23,9 @@ describe('Model - User', () => {
 	
 			expect(user).to.deep.equal({
 				id: 1,
-				linkblue_username: 'user'
+				linkblue_username: 'user',
+				passwordhash: '$2b$10$L1Plm9AJN1DlvUemUkxgmuf8srfTkvNnUV9ImKl/E0UKyAQTbNJS6',
+				authtoken: null
 			})
 		})
 
@@ -31,7 +35,8 @@ describe('Model - User', () => {
 
 		it('checks for duplicates', async () => {
 			const user_promise = User.query().insert({
-				linkblue_username: 'user'
+				linkblue_username: 'user',
+				passwordhash: "$2b$10$L1Plm9AJN1DlvUemUkxgmuf8srfTkvNnUV9ImKl/E0UKyAQTbNJS6"
 			})
 
 			expect(user_promise).to.eventually.be.rejected
