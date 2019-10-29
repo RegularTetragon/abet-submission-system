@@ -121,7 +121,8 @@ router.route('/')
 		}
 	}))
 
-/* GET course page */
+
+	/* GET course page */
 router.route('/:id')
 	.get(html.auth_wrapper(async (req, res, next) => {
 		if (req.params.id === 'new') {
