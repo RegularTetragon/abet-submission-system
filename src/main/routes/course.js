@@ -108,6 +108,7 @@ const course_new_page = async (res, department = false) => {
 /* GET course home page */
 router.route('/')
 	.get(html.auth_wrapper(async (req, res, next) => {
+		//Implemented by Vince
 		let user = await User.query().where({authtoken: req.session.id}).first()
 		if (user) {
 			res.render('base_template', {
