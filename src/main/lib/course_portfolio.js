@@ -79,15 +79,18 @@ module.exports.get = async (portfolio_id)  =>{
 			}
 		})
 		.findById(portfolio_id)
+	
+	
 
 	let portfolio = {
 		portfolio_id: raw_portfolio.id,
 		course_id: raw_portfolio.course_id,
 		instructor: raw_portfolio.instructor,
 		num_students: raw_portfolio.num_students,
-		outcomes: [
+		outcomes: [],// JESSIAH DO THIS BRO: Outcomes is an array of strings!!
 			
-		],
+		
+		// UNTIL HERE BRO
 		course: {
 			department: raw_portfolio.owner.owner.identifier,
 			number: raw_portfolio.owner.number,

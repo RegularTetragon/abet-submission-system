@@ -11,10 +11,10 @@ let Course = require('../models/Course')
 x
 const course_manage_page = async (res, course_id) => {
 	let course_info = await course_portfolio_lib.get(course_id);
-	if (!course) {
+	if (!course_info) {
 		throw "Course not found with id " + course_id + " :(";
 	}
-	let course_info = {
+	/*let course_info = {
 		student_learning_outcomes: [
 			{
 				index: portfolio_id,
@@ -79,10 +79,10 @@ const course_manage_page = async (res, course_id) => {
 				]
 			}
 		]
-	};*/
-
+	};
+	*/
 	res.render('base_template', {
-		title: 'CS498 Course Portfolio',
+		title: "CS Whatever",
 		body: mustache.render('course/manage', course_info)
 	})
 }
