@@ -49,13 +49,12 @@ module.exports.new = async ({
 			description: description,
 		})))
 	
-	let portfolio_outcome_relations = await SloPortfolioRelation.query().insert(
-		outcomes.map(({id: id, description: description})=>({
+	let portfolio_outcome_relations = await SloPortfolioRelation.query()
+		.insert(outcomes.map(({id: id, description: description})=>({
 			portfolio_id: portfolio_id,
 			slo_id: id,
 			description: description
 		})));
-
 	// TODO
 	return portfolio;
 }
