@@ -9,7 +9,9 @@ const TermType = require('../models/TermType')
 const User = require('../models/User');
 
 const course_manage_page = async (res, course_id) => {
-	let course_info = {
+	//Change this to contain the course identified by course_id from the database
+	let course_info = await course_portfolio_lib.get(course_id);
+	/*let course_info = {
 		student_learning_outcomes: [
 			{
 				index: 1,
@@ -74,7 +76,7 @@ const course_manage_page = async (res, course_id) => {
 				]
 			}
 		]
-	};
+	};*/
 
 	res.render('base_template', {
 		title: 'CS498 Course Portfolio',
@@ -132,6 +134,8 @@ router.route('/:id')
 			await course_manage_page(res, req.params.id)
 		}
 	}))
+
+
 	.post(html.auth_wrapper(async (req, res, next) => {
 		if (req.params.id === 'new') {
 			if (req.body.course_submit) {

@@ -1,4 +1,5 @@
 const Portfolio = require('../models/CoursePortfolio')
+const StudentLearningOutcomes = require('../models/StudentLearningOutcome')
 
 module.exports.new = async ({
 	department_id,
@@ -41,7 +42,9 @@ module.exports.get = async (portfolio_id)  =>{
 		course_id: raw_portfolio.course_id,
 		instructor: raw_portfolio.instructor,
 		num_students: raw_portfolio.num_students,
-		outcomes: [],
+		outcomes: [
+			
+		],
 		course: {
 			department: raw_portfolio.owner.owner.identifier,
 			number: raw_portfolio.owner.number,
