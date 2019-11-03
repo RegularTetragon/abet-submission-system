@@ -1,20 +1,63 @@
 const Portfolio = require('../models/CoursePortfolio')
-const StudentLearningOutcomes = require('../models/StudentLearningOutcome')
+const User = require('../models/User');
+const Course = require('../models/Course');
+const Term = require('../models/Term');
+const SloPortfolioRelation = require('../models/CoursePortfolio/StudentLearningOutcome')
+const Slo = require('../models/StudentLearningOutcome/index')
 
 module.exports.new = async ({
-	department_id,
-	course_number,
-	instructor,
-	semester,
+	department_id,	
+	course_number,	//Not the course id
+	instructor,		//Not the instructor id
+	semester,		//Not the semester id
 	year,
 	num_students,
-	student_learning_outcomes,
+	student_learning_outcomes, //[String]
 	section
 }) => {
+	let [instructor_id, course_id, semester_term_id] = await Promise.all([
+		User.query()
+			.select("id")
+			.where({"linkblue_username":instructor})
+			.where("number_key", ">", 34)
+			.first()
+		,
+		Course.query()
+			.select("id")
+			.where({"number":course_number, "department":department_id})
+			.first()
+		,
+		Term.query()
+			.select("id")
+			.where({"name":semester})
+			.first()
+	]);
+	
+	let portfolio = await Portfolio.query().upsert({
+		course_id:			course_id,
+		instructor_id:  	instructor_id,
+		semester_term_id:	semester_term_id,
+		num_students:		num_students,
+		section:			section,
+		year:				year
+	});
+
+	let outcomes = await Slo.query()
+		.insert(student_learning_outcomes.map((description, index)=>({
+			department_id: department_id,
+			index: index,
+			description: description,
+		})))
+	
+	let portfolio_outcome_relations = await SloPortfolioRelation.query().insert(
+		outcomes.map(({id: id, description: description})=>({
+			portfolio_id: portfolio_id,
+			slo_id: id,
+			description: description
+		})));
+
 	// TODO
-	return {
-		id: 'todo'
-	};
+	return portfolio;
 }
 
 

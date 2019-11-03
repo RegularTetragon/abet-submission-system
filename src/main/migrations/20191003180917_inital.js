@@ -44,7 +44,7 @@ exports.up = knex => {
 				.inTable('department')
 				.index()
 				.notNullable()
-			table.integer('index')
+			table.integer('index')	//Original order that the SLO was put in
 				.notNullable()
 			table.string('description')
 				.notNullable()
@@ -85,6 +85,7 @@ exports.up = knex => {
 			table.integer('number')
 				.notNullable()
 			table.unique(['department_id', 'number'])
+			
 		})
 		.createTable('portfolio', table => {
 			table.increments('id')
