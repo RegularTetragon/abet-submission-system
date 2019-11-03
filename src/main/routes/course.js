@@ -7,12 +7,17 @@ var router = express.Router();
 const Department = require('../models/Department')
 const TermType = require('../models/TermType')
 const User = require('../models/User');
-
+let Course = require('../models/Course')
+x
 const course_manage_page = async (res, course_id) => {
+	let course_info = await course_portfolio_lib.get(course_id);
+	if (!course) {
+		throw "Course not found with id " + course_id + " :(";
+	}
 	let course_info = {
 		student_learning_outcomes: [
 			{
-				index: 1,
+				index: portfolio_id,
 				description: 'n/a',
 				metrics: [
 					{
