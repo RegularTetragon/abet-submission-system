@@ -1,9 +1,16 @@
 const Portfolio = require('../models/CoursePortfolio')
 const User = require('../models/User');
+const user = require("./user.js")
 const Course = require('../models/Course');
 const Term = require('../models/Term');
 const SloPortfolioRelation = require('../models/CoursePortfolio/StudentLearningOutcome')
 const Slo = require('../models/StudentLearningOutcome/index')
+
+
+/**
+ * @interface CoursePortfolio
+ */
+
 
 module.exports.new = async ({
 	department_id,	
@@ -108,4 +115,47 @@ module.exports.get = async (portfolio_id)  =>{
 	}
 
 	return portfolio
+}
+
+module.exports.collect = async (userid) => {
+	console.log(userid);
+	return (await Portfolio.query().where({"instructor_id":userid})).map(
+		portfolio => {
+			portfolio.completion = coursecompletion(portfolio)
+			portfolio.duedate = duedate(portfolio)
+			return portfolio;
+		}
+	);
+}
+module.exports.partition = async (userid) =>{
+	let courses = await module.exports.collect(userid);
+	let active = [];
+	let inactive = [];
+	courses.foreach(course => module.exports.isActive(course) ? left.insert(course) : right.insert(course));
+	return {active:active, inactive:inactive};
+}
+
+let coursecompletion = (courseinstance) => {
+	console.writeln("coursecompletion not yet implemented")
+	return "Not done";
+}
+
+/**
+ * 
+ * @param {Object} courseinstance
+ * @returns {Date}
+ */
+function duedate (courseinstance) {
+	console.writeln("duedate not yet implemented")
+	return Date.now();
+}
+
+/**
+ * 
+ * @param {Object} courseinstance
+ * @returns {Boolean}
+ */
+function isActive (courseinstance) {
+	console.writeln("isActive not yet implemented")
+	return true;
 }
