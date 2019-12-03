@@ -8,7 +8,7 @@ var assert = require('assert');
 const Department = require('../models/Department')
 const TermType = require('../models/TermType')
 const User = require('../models/User');
-const user = require("../lib/user")
+const user_lib = require("../lib/user")
 let Course = require('../models/Course')
 let CoursePortfolio = require('../models/CoursePortfolio/index')
 
@@ -116,8 +116,11 @@ const course_new_page = async (res, department = false) => {
 /* GET course home page */
 router.route('/')
 	.get(html.auth_wrapper(async (req, res, next) => {
-		let user = await user.getuserfromtoken(req.session.id)
-		assert(user != undefined);
+		let user = await user_lib.getuserfromtoken(req.session.id)
+		if (user == undefined) {
+			res.redirect("/login");
+			return
+		}
 		let coursedata = await course_portfolio_lib.partition(user.id);
 		
 		for (course of coursedata.active) {

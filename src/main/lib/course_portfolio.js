@@ -119,13 +119,12 @@ module.exports.get = async (portfolio_id)  =>{
 
 module.exports.collect = async (userid) => {
 	console.log(userid);
-	return (await Portfolio.query().where({"instructor_id":userid})).map(
-		portfolio => {
-			portfolio.completion = coursecompletion(portfolio)
-			portfolio.duedate = duedate(portfolio)
-			return portfolio;
-		}
-	);
+	let portfolios = await Portfolio.query().where({"instructor_id":userid}) 
+	for (portfolio of portfolios) {
+		portfolio.completion = module.exports.coursecompletion(portfolio)
+		portfolio.duedate = module.exports.duedate(portfolio)
+	}
+	return portfolios;
 }
 /**
  * @description breaks courses into active and inactive lists.
@@ -136,7 +135,9 @@ module.exports.partition = async (userid) =>{
 	let courses = await module.exports.collect(userid);
 	let active = [];
 	let inactive = [];
-	courses.foreach(course => module.exports.isActive(course) ? left.insert(course) : right.insert(course));
+	for (course of courses) {
+		module.exports.isActive(course) ? left.insert(course) : right.insert(course)
+	}
 	return {active:active, inactive:inactive};
 }
 /**
@@ -158,6 +159,14 @@ module.exports.coursecompletion = (courseinstance) => {
 module.exports.duedate = (courseinstance) => {
 	let term = courseinstance.semester
 	let year = courseinstance.year
+	return module.exports.getDueDateFromYearTerm(year, term);
+}
+/**
+ * @param {Number} year
+ * @param {String} term
+ * @returns {Date}
+ */
+module.exports.getDueDateFromYearTerm = (year, term) => {
 	switch(term.value) {
 		case "fall":
 			return new Date(year + 1, "January", 1);
@@ -175,6 +184,7 @@ module.exports.duedate = (courseinstance) => {
 			throw new Error("duedate not implemented for term " + term.value );
 	}
 }
+
 
 /**
  * Determines if the course is active by the date provided.
