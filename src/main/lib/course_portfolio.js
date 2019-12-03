@@ -127,6 +127,11 @@ module.exports.collect = async (userid) => {
 		}
 	);
 }
+/**
+ * @description breaks courses into active and inactive lists.
+ * @param {number} userid
+ * @returns {Array<Array<Object>>}
+ */
 module.exports.partition = async (userid) =>{
 	let courses = await module.exports.collect(userid);
 	let active = [];
@@ -134,8 +139,12 @@ module.exports.partition = async (userid) =>{
 	courses.foreach(course => module.exports.isActive(course) ? left.insert(course) : right.insert(course));
 	return {active:active, inactive:inactive};
 }
-
-let coursecompletion = (courseinstance) => {
+/**
+ * @description Returns the string representing the completion of the course
+ * @param {*} courseinstance 
+ * @returns {String}
+ */
+module.exports.coursecompletion = (courseinstance) => {
 	console.writeln("coursecompletion not yet implemented")
 	return "Not done";
 }
@@ -145,17 +154,34 @@ let coursecompletion = (courseinstance) => {
  * @param {Object} courseinstance
  * @returns {Date}
  */
-function duedate (courseinstance) {
-	console.writeln("duedate not yet implemented")
-	return Date.now();
+//Goal: 2 weeks after finals
+module.exports.duedate = (courseinstance) => {
+	let term = courseinstance.semester
+	let year = courseinstance.year
+	switch(term.value) {
+		case "fall":
+			return new Date(year + 1, "January", 1);
+		case "spring":
+			return new Date(year, "May", 8 + 14);
+		case "summer 1":
+			return new Date(year, "August", 6 + 14);
+		case "summer 2":
+			return new Date(year, "August", 6 + 14);
+		case "winter":
+			return new Date(year + 1, "January", 14 + 14);
+		case "does not apply":
+			return new Date(year, "December", 31);
+		default:
+			throw new Error("duedate not implemented for term " + term.value );
+	}
 }
 
 /**
- * 
+ * Determines if the course is active by the date provided.
  * @param {Object} courseinstance
+ * @param {Date} currentDate
  * @returns {Boolean}
  */
-function isActive (courseinstance) {
-	console.writeln("isActive not yet implemented")
-	return true;
+module.exports.isActive = (courseinstance, currentDate) => {
+	return module.exports.duedate(courseinstance) > currentDate;
 }
