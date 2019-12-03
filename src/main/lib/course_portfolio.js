@@ -11,6 +11,23 @@ const Slo = require('../models/StudentLearningOutcome/index')
  * @interface CoursePortfolio
  */
 
+const eagertable = {
+	owner: {
+		owner: true
+	},
+	instructor: true,
+	semester: true,
+	outcomes: {
+		slo: {
+			metrics: true
+		},
+		artifacts: {
+			evaluations: true
+		}
+	}
+}
+
+
 
 module.exports.new = async ({
 	department_id,	
@@ -69,21 +86,7 @@ module.exports.new = async ({
 
 module.exports.get = async (portfolio_id)  =>{
 	let raw_portfolio = await Portfolio.query()
-		.eager({
-			owner: {
-				owner: true
-			},
-			instructor: true,
-			semester: true,
-			outcomes: {
-				slo: {
-					metrics: true
-				},
-				artifacts: {
-					evaluations: true
-				}
-			}
-		})
+		.eager(eagertable)
 		.findById(portfolio_id)
 	
 	
@@ -118,25 +121,24 @@ module.exports.get = async (portfolio_id)  =>{
 }
 
 module.exports.collect = async (userid) => {
-	console.log(userid);
-	let portfolios = await Portfolio.query().where({"instructor_id":userid}) 
+	let portfolios = await Portfolio.query().eager(eagertable).where({"instructor_id":userid}) 
+	
 	for (portfolio of portfolios) {
 		portfolio.completion = module.exports.coursecompletion(portfolio)
-		portfolio.duedate = module.exports.duedate(portfolio)
+		portfolio.duedate = await module.exports.duedate(portfolio)
 	}
 	return portfolios;
 }
 /**
  * @description breaks courses into active and inactive lists.
- * @param {number} userid
+ * @param {Array<Object>} courses
  * @returns {Array<Array<Object>>}
  */
-module.exports.partition = async (userid) =>{
-	let courses = await module.exports.collect(userid);
+module.exports.partition = async (courses) =>{
 	let active = [];
 	let inactive = [];
 	for (course of courses) {
-		module.exports.isActive(course) ? left.insert(course) : right.insert(course)
+		module.exports.isActive(course) ? active.push(course) : inactive.push(course)
 	}
 	return {active:active, inactive:inactive};
 }
@@ -146,7 +148,6 @@ module.exports.partition = async (userid) =>{
  * @returns {String}
  */
 module.exports.coursecompletion = (courseinstance) => {
-	console.writeln("coursecompletion not yet implemented")
 	return "Not done";
 }
 
@@ -156,10 +157,10 @@ module.exports.coursecompletion = (courseinstance) => {
  * @returns {Date}
  */
 //Goal: 2 weeks after finals
-module.exports.duedate = (courseinstance) => {
-	let term = courseinstance.semester
+module.exports.duedate = async (courseinstance) => {
+	let term = await Term.query().findById(courseinstance.semester_term_id)
 	let year = courseinstance.year
-	return module.exports.getDueDateFromYearTerm(year, term);
+	return module.exports.getDueDateFromYearTerm(year, term.value);
 }
 /**
  * @param {Number} year
@@ -167,21 +168,21 @@ module.exports.duedate = (courseinstance) => {
  * @returns {Date}
  */
 module.exports.getDueDateFromYearTerm = (year, term) => {
-	switch(term.value) {
+	switch(term) {
 		case "fall":
-			return new Date(year + 1, "January", 1);
+			return new Date(year + 1, 1, 1);
 		case "spring":
-			return new Date(year, "May", 8 + 14);
+			return new Date(year, 5, 8 + 14);
 		case "summer 1":
-			return new Date(year, "August", 6 + 14);
+			return new Date(year, 8, 6 + 14);
 		case "summer 2":
-			return new Date(year, "August", 6 + 14);
+			return new Date(year, 8, 6 + 14);
 		case "winter":
-			return new Date(year + 1, "January", 14 + 14);
+			return new Date(year + 1, 1, 14 + 14);
 		case "does not apply":
-			return new Date(year, "December", 31);
+			return new Date(year, 12, 31);
 		default:
-			throw new Error("duedate not implemented for term " + term.value );
+			throw new Error("duedate not implemented for term " + term );
 	}
 }
 

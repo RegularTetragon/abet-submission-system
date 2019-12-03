@@ -121,7 +121,7 @@ router.route('/')
 			res.redirect("/login");
 			return
 		}
-		let coursedata = await course_portfolio_lib.partition(user.id);
+		let coursedata = await course_portfolio_lib.partition(await course_portfolio_lib.collect(user.id));
 		
 		for (course of coursedata.active) {
 			course.due = "Due date not done";
