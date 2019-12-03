@@ -1,0 +1,21 @@
+<section class="container">
+	<form action="/permissions/" target="_self" method="POST">
+		<div class="row container">
+			<div class="col">
+				<label for="email">User email: </label><input type="email" name="email">
+			</div>
+			<div class="col">
+				<select name="perm_level">
+					<option value="blacklisted" selected>Blacklisted</option>
+					<option value="student">Student</option>
+					<option value="professor">Professor</option>
+					<option value="dus">DUS</option>
+				</select>
+			</div>
+			<div class="col">
+				<button type="delete" value="delete">Delete</button>
+			</div>
+		</div>	
+		<input type="submit" name="submit" value="Submit">	
+	</form>
+</section>
