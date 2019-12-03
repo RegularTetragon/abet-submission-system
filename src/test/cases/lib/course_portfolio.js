@@ -36,14 +36,14 @@ describe('Lib - CoursePortfolio', () => {
 				department_id: 2,
 				course_number: 215,	//Not the course id
 				instructor: 'user@uky.edu',		//Not the instructor id
-				semester: 'fall',		//Not the semester id
+				semester: {value: 'fall'},		//Not the semester id
 				year: 2016,
 				num_students: 41,
 				student_learning_outcomes: ["Students will learn basic programming skills in C++", "Students will learn about for"], //[String]
 				section:1
 			}
 			//act
-			let result = course_portfolio.isActive(instance)
+			let result = await course_portfolio.isActive(instance, Date.now())
 			//assert
 			expect(result).to.be.false
 		})
@@ -54,16 +54,16 @@ describe('Lib - CoursePortfolio', () => {
 				department_id: 2,
 				course_number: 215,	//Not the course id
 				instructor: 'user@uky.edu',		//Not the instructor id
-				semester: 'fall',		//Not the semester id
+				semester: {value:'fall'},		//Not the semester id
 				year: 2019,
 				num_students: 41,
 				student_learning_outcomes: ["Students will learn basic programming skills in C++", "Students will learn about for"], //[String]
 				section:1
 			}
 			//act
-			let result = course_portfolio.isActive(instance)
+			let result = await course_portfolio.isActive(instance, Date.now())
 			//assert
-			expect(result).to.be.false
+			expect(result).to.be.true
 		})
 	})
 
@@ -71,7 +71,7 @@ describe('Lib - CoursePortfolio', () => {
 		it('returns correct date', async()=>{
 			//describe
 			let year = 2019
-			let term = "fall"
+			let term = {value:"fall"}
 			//act
 			let result = course_portfolio.getDueDateFromYearTerm(year, term)
 			//assert
@@ -112,7 +112,7 @@ describe('Lib - CoursePortfolio', () => {
 					department_id: 2,
 					course_number: 215,	//Not the course id
 					instructor: 'user@uky.edu',		//Not the instructor id
-					semester: 'fall',		//Not the semester id
+					semester: {value: 'fall'},		//Not the semester id
 					year: 2020,
 					num_students: 41,
 					student_learning_outcomes: ["Students will learn basic programming skills in C++", "Students will learn about for"], //[String]
@@ -120,9 +120,9 @@ describe('Lib - CoursePortfolio', () => {
 				},
 				{
 					department_id: 2,
-					course_number: 215,	//Not the course id
-					instructor: 'user@uky.edu',		//Not the instructor id
-					semester: 'fall',		//Not the semester id
+					course_number: 215,	
+					instructor: 'user@uky.edu',		
+					semester: {value: 'fall'},		
 					year: 2016,
 					num_students: 41,
 					student_learning_outcomes: ["Students will learn basic programming skills in C++", "Students will learn about for"], //[String]
@@ -130,9 +130,9 @@ describe('Lib - CoursePortfolio', () => {
 				},
 				{
 					department_id: 2,
-					course_number: 215,	//Not the course id
-					instructor: 'user@uky.edu',		//Not the instructor id
-					semester: 'fall',		//Not the semester id
+					course_number: 215,
+					instructor: 'user@uky.edu',		
+					semester: {value: 'fall'},		
 					year: 2011,
 					num_students: 41,
 					student_learning_outcomes: ["Students will learn basic programming skills in C++", "Students will learn about for"], //[String]
@@ -141,7 +141,25 @@ describe('Lib - CoursePortfolio', () => {
 			]
 			let {active, inactive} = await course_portfolio.partition(courses)
 			//assert
-			expect(inactive.length).to.equal(3)
+			expect(  active.length).to.equal(1)
+			expect(inactive.length).to.equal(2)
+		})
+	})
+
+	describe('duedate', async() => {
+		it('returns a valid date', async ()=>{
+			//describe
+			let course = {
+				semester: {value: "fall"},
+				year: 2019
+			}
+
+			//act
+			let date = await course_portfolio.duedate(course);
+
+			//assert
+			expect(date.getFullYear()).to.equal(2020)
+			expect(date.getMonth()).to.equal(1)
 		})
 	})
 })

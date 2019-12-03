@@ -37,7 +37,7 @@ describe('Model - CoursePortfolio', () => {
 				.findById(1)
 			const slo_metrics = await portfolio.$relatedQuery('instructor')
 
-			expect(slo_metrics).to.have.property('linkblue_username', 'user')
+			expect(slo_metrics).to.have.property('linkblue_username', 'user@uky.edu')
 		})
 
 		it('has semester term', async () => {

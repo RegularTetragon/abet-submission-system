@@ -96,10 +96,10 @@ module.exports.get = async (portfolio_id)  =>{
 		course_id: raw_portfolio.course_id,
 		instructor: raw_portfolio.instructor,
 		num_students: raw_portfolio.num_students,
-		outcomes: [],// JESSIAH DO THIS BRO: Outcomes is an array of strings!!
+		outcomes: [],
 			
 		
-		// UNTIL HERE BRO
+		
 		course: {
 			department: raw_portfolio.owner.owner.identifier,
 			number: raw_portfolio.owner.number,
@@ -108,8 +108,6 @@ module.exports.get = async (portfolio_id)  =>{
 			year: raw_portfolio.year
 		},
 	}
-
-	console.log(raw_portfolio)
 
 	for (let i in raw_portfolio.outcomes) {
 		portfolio.outcomes.push(Object.assign({
@@ -121,8 +119,7 @@ module.exports.get = async (portfolio_id)  =>{
 }
 
 module.exports.collect = async (userid) => {
-	let portfolios = await Portfolio.query().eager(eagertable).where({"instructor_id":userid}) 
-	
+	let portfolios = await Portfolio.query().eager(eagertable).where({"instructor_id":userid})
 	for (portfolio of portfolios) {
 		portfolio.completion = module.exports.coursecompletion(portfolio)
 		portfolio.duedate = await module.exports.duedate(portfolio)
@@ -132,13 +129,13 @@ module.exports.collect = async (userid) => {
 /**
  * @description breaks courses into active and inactive lists.
  * @param {Array<Object>} courses
- * @returns {Array<Array<Object>>}
+ * @returns {Promise<Array<Array<Object>>>}
  */
 module.exports.partition = async (courses) =>{
 	let active = [];
 	let inactive = [];
 	for (course of courses) {
-		module.exports.isActive(course) ? active.push(course) : inactive.push(course)
+		await module.exports.isActive(course, Date.now()) ? active.push(course) : inactive.push(course)
 	}
 	return {active:active, inactive:inactive};
 }
@@ -154,21 +151,21 @@ module.exports.coursecompletion = (courseinstance) => {
 /**
  * 
  * @param {Object} courseinstance
- * @returns {Date}
+ * @returns {Promise<Date>}
  */
 //Goal: 2 weeks after finals
-module.exports.duedate = async (courseinstance) => {
-	let term = await Term.query().findById(courseinstance.semester_term_id)
+module.exports.duedate = async(courseinstance) => {
+	let term = courseinstance.semester
 	let year = courseinstance.year
-	return module.exports.getDueDateFromYearTerm(year, term.value);
+	return module.exports.getDueDateFromYearTerm(year, term);
 }
 /**
  * @param {Number} year
- * @param {String} term
+ * @param {Term} term
  * @returns {Date}
  */
 module.exports.getDueDateFromYearTerm = (year, term) => {
-	switch(term) {
+	switch(term.value) {
 		case "fall":
 			return new Date(year + 1, 1, 1);
 		case "spring":
@@ -190,9 +187,11 @@ module.exports.getDueDateFromYearTerm = (year, term) => {
 /**
  * Determines if the course is active by the date provided.
  * @param {Object} courseinstance
- * @param {Date} currentDate
- * @returns {Boolean}
+ * @param {Number?} now
+ * @returns {Promise<Boolean>}
  */
-module.exports.isActive = (courseinstance, currentDate) => {
-	return module.exports.duedate(courseinstance) > currentDate;
+module.exports.isActive = async (courseinstance, now) =>  {
+	now = now || Date.now()
+	let duedate = await module.exports.duedate(courseinstance)
+	return duedate.getTime() > now;
 }
