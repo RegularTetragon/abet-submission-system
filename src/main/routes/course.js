@@ -3,11 +3,14 @@ var mustache = require('../common/mustache')
 var html = require('../common/html')
 var course_portfolio_lib = require('../lib/course_portfolio')
 var router = express.Router();
+var assert = require('assert');
 
 const Department = require('../models/Department')
 const TermType = require('../models/TermType')
 const User = require('../models/User');
+const user = require("../lib/user")
 let Course = require('../models/Course')
+let CoursePortfolio = require('../models/CoursePortfolio/index')
 
 const course_manage_page = async (res, course_id) => {
 	let course_info = await course_portfolio_lib.get(course_id);
@@ -113,12 +116,18 @@ const course_new_page = async (res, department = false) => {
 /* GET course home page */
 router.route('/')
 	.get(html.auth_wrapper(async (req, res, next) => {
-		//Implemented by Vince
-		let user = await User.query().where({authtoken: req.session.id}).first()
+		let user = await user.getuserfromtoken(req.session.id)
+		assert(user != undefined);
+		let coursedata = await course_portfolio_lib.partition(user.id);
+		
+		for (course of coursedata.active) {
+			course.due = "Due date not done";
+			course.completion = "Completion not done";
+		}
 		if (user) {
 			res.render('base_template', {
 				title: 'Course Portfolios',
-				body: mustache.render('course/index'),
+				body: mustache.render('course/index', coursedata),
 				linkblue_username: user.linkblue_username
 			})
 		}
@@ -126,7 +135,6 @@ router.route('/')
 			res.redirect('/login')
 		}
 	}))
-
 
 	/* GET course page */
 router.route('/:id')

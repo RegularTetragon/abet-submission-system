@@ -1,9 +1,16 @@
 const Portfolio = require('../models/CoursePortfolio')
 const User = require('../models/User');
+const user = require("./user.js")
 const Course = require('../models/Course');
 const Term = require('../models/Term');
 const SloPortfolioRelation = require('../models/CoursePortfolio/StudentLearningOutcome')
 const Slo = require('../models/StudentLearningOutcome/index')
+
+
+/**
+ * @interface CoursePortfolio
+ */
+
 
 module.exports.new = async ({
 	department_id,	
@@ -108,4 +115,73 @@ module.exports.get = async (portfolio_id)  =>{
 	}
 
 	return portfolio
+}
+
+module.exports.collect = async (userid) => {
+	console.log(userid);
+	return (await Portfolio.query().where({"instructor_id":userid})).map(
+		portfolio => {
+			portfolio.completion = coursecompletion(portfolio)
+			portfolio.duedate = duedate(portfolio)
+			return portfolio;
+		}
+	);
+}
+/**
+ * @description breaks courses into active and inactive lists.
+ * @param {number} userid
+ * @returns {Array<Array<Object>>}
+ */
+module.exports.partition = async (userid) =>{
+	let courses = await module.exports.collect(userid);
+	let active = [];
+	let inactive = [];
+	courses.foreach(course => module.exports.isActive(course) ? left.insert(course) : right.insert(course));
+	return {active:active, inactive:inactive};
+}
+/**
+ * @description Returns the string representing the completion of the course
+ * @param {*} courseinstance 
+ * @returns {String}
+ */
+module.exports.coursecompletion = (courseinstance) => {
+	console.writeln("coursecompletion not yet implemented")
+	return "Not done";
+}
+
+/**
+ * 
+ * @param {Object} courseinstance
+ * @returns {Date}
+ */
+//Goal: 2 weeks after finals
+module.exports.duedate = (courseinstance) => {
+	let term = courseinstance.semester
+	let year = courseinstance.year
+	switch(term.value) {
+		case "fall":
+			return new Date(year + 1, "January", 1);
+		case "spring":
+			return new Date(year, "May", 8 + 14);
+		case "summer 1":
+			return new Date(year, "August", 6 + 14);
+		case "summer 2":
+			return new Date(year, "August", 6 + 14);
+		case "winter":
+			return new Date(year + 1, "January", 14 + 14);
+		case "does not apply":
+			return new Date(year, "December", 31);
+		default:
+			throw new Error("duedate not implemented for term " + term.value );
+	}
+}
+
+/**
+ * Determines if the course is active by the date provided.
+ * @param {Object} courseinstance
+ * @param {Date} currentDate
+ * @returns {Boolean}
+ */
+module.exports.isActive = (courseinstance, currentDate) => {
+	return module.exports.duedate(courseinstance) > currentDate;
 }

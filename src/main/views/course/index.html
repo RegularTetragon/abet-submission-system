@@ -15,6 +15,20 @@
 				<th>Due Date</th>
 				<th></th>
 			</tr>
+			{{#active}}
+			<tr>
+				<!--Course name-->
+				<td>{{name}}</td>
+				<!--Course term-->
+				<td>{{semester}}</td>
+				<!--Course year-->
+				<td>{{year}}</td>
+				<!--Course completion-->
+				<td>{{completion}}</td>
+				<!--Due date-->
+				<td>{{due}}</td>
+			</tr>
+			{{/active}}
 			<tr>
 				<td>CS498</td>
 				<td>Fall</td>
