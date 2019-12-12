@@ -3,16 +3,6 @@ name: Node CI
 on: [push]
 
 jobs:
-  services:
-    postgres:
-      image: postgres
-      env:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: waluigitime
-        POSTGRES_DB: abet_system_dev
-      ports:
-        - 5421:5421
-      options: --health-cmd pg_isready --health-interval 10s --health-retries 5
   build:
 
     runs-on: ubuntu-latest
