@@ -1,4 +1,6 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RegularTetragon_abet-submission-system&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=RegularTetragon_abet-submission-system)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=RegularTetragon_abet-submission-system&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=RegularTetragon_abet-submission-system)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=RegularTetragon_abet-submission-system&metric=ncloc)](https://sonarcloud.io/dashboard?id=RegularTetragon_abet-submission-system)
 
 # ABET Submission System
 
