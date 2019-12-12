@@ -25,5 +25,5 @@ jobs:
     - name: Start the system
       run: npm start:unix
 
-      name: Run tests
+    - name: Run tests
       run: npm test:unix
