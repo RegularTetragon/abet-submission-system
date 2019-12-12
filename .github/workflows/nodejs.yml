@@ -19,8 +19,10 @@ jobs:
     - name: Clean npm install
       run: npm ci
       
-    - name: Setup
+    - name: Setup database
       run: npm setup_db:unix
+
+    - name: Start the system
       run: npm start:unix
 
       name: Run tests
