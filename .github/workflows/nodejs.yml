@@ -31,8 +31,5 @@ jobs:
     - name: Setup Database
       run: npm run setup_db:unix
 
-    - name: Start the system
-      run: npm run start:unix
-
     - name: Run tests
       run: npm run test:unix
