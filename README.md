@@ -1,4 +1,4 @@
-![Sonarcloud Badges](https://sonarcloud.io/web_api/api/project_badges/measure)
+![Sonarcloud Status](https://sonarcloud.io/web_api/api/project_badges/measure?metric=coverage&?project=RegularTetragon/abet-submission-system)
 
 # ABET Submission System
 
