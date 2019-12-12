@@ -1,4 +1,4 @@
-![Sonarcloud Status](https://sonarcloud.io/web_api/api/project_badges/measure?project=RegularTetragon/abet-submission-system&metric=coverage)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RegularTetragon_abet-submission-system&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=RegularTetragon_abet-submission-system)
 
 # ABET Submission System
 
