@@ -28,11 +28,11 @@ jobs:
       run: npm ci
 
     
-    - name: setup Database
-      run: npm setup_db:unix
+    - name: Setup Database
+      run: npm run setup_db:unix
 
     - name: Start the system
-      run: npm start:unix
+      run: npm run start:unix
 
     - name: Run tests
-      run: npm test:unix
+      run: npm run test:unix
